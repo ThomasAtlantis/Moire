@@ -1,0 +1,3 @@
+# user-wide
+[CLI]
+disable_caching = True

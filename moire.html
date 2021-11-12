@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Raster Animation</title>
+</head>
+<body>
+  <canvas id="test" width="800px" height="600px"></canvas>
+</body>
+<script>
+  function sleep(t) {
+    return new Promise((resolve) => {setTimeout(resolve, t)})
+  }
+  window.onload = function () {
+    function move() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < 8; ++ i) {
+        for (let j = 0; j * totalWidth < img[i].width; ++ j) {
+          ctx.drawImage(
+              img[i], i * remainWidth + j * totalWidth, 0, remainWidth, img[i].height,
+              i * remainWidth + j * totalWidth, 0, remainWidth + 1, img[i].height);
+        }
+      }
+
+      ctx.fillStyle = "black";
+      for (let j = 0; j * totalWidth < img[0].height; ++ j) {
+        ctx.fillRect(time * remainWidth + j * totalWidth, 0, eraseWidth, img[0].height);
+      }
+
+      time = (time + 1) % 100;
+      sleep(100).then(() => {
+        requestAnimationFrame(move);
+      });
+    }
+    const width = 800, height = 600;
+    let canvas = document.querySelector("#test");
+    let ctx = canvas.getContext("2d");
+    let remainWidth = 1; let time = 1;
+    let eraseWidth = 7 * remainWidth;
+    let totalWidth = 8 * remainWidth;
+
+    let img = new Array(8);
+    for (let i = 0; i < 8; ++ i) {
+      img[i] = new Image();
+      img[i].src = "imgs/walk-" + (i*4) + ".png";
+      img[i].onload = () => {
+        for (let j = 0; j * totalWidth < img[i].width; ++ j) {
+          ctx.drawImage(
+            img[i], i * remainWidth + j * totalWidth, 0, remainWidth, img[i].height,
+            i * remainWidth + j * totalWidth, 0, remainWidth + 1, img[i].height);
+        }
+      }
+    }
+    sleep(1000).then(() => {
+      move();
+    });
+  }
+</script>
+</html>
